@@ -9,6 +9,6 @@
 ### 6. 이클립스 실행 후 프로젝트에 톰캣 8.5를 연결 시킵니다. 이때 톰캣 권장 포트는 8090,8005,1023,1000이 있습니다.
 ### 7. 프로젝트 내에서 DB를 연결합니다. 연결 할 때 오라클은 oracle thindriver  oracle 11로 설정하고 ojdbc14.jar 삭제하고  ojdbc6.jar 추가합니다. 또 service Name은 xe로 설정하고 host는 localhost, user name은 system, password는 1234로 확인합니다.
 # jsp페이지
-### webapp 아래 layoyt 폴더를 만든 후 폴더 안에 header,nav,section,footer 4개의 jsp를 만들고, webapp 아래 index,reservatoin,reservatoin_p,member_list,search,search_p,total 7개의 jsp 페이지를 만든다.
+### webapp 아래 layoyt 폴더를 만든 후 폴더 안에 header,nav,section,footer 4개의 jsp를 만들고, webapp 아래 index,reservatoin,reservatoin_p,member_list,search,search_p,total 7개의 jsp 페이지를 만든다. 또 DBConnect.java라는 데이터베이스 연결 페이지를 만들어준다.(style.css페이지는 필수 사항이 아니지만 css로 꾸미고 싶은 사람은 사용한다.)
 # DB분석
-### 데이터베이스에서 테이블은 TBL_JUMIN_202108, TBL_HOSP_202108, TBL_VACCRESV_202108 3개의 테이블을 오라클에서 실행 후 폼화면에서 작동하게 한다(?)
+### 데이터베이스에서 테이블은 TBL_JUMIN_202108, TBL_HOSP_202108, TBL_VACCRESV_202108 3개의 테이블생성한다. 폼안에 입력양식들의 name 속성은 오라클 쿼리문에 테이블 컬럼명과 동일하게 작용한다.
