@@ -152,3 +152,47 @@ function checkValue(){
 ### 6. 마지막 행에는 등록과 취소라는 버튼을 만들고 등록을 누르게 되면 reservation_p.jsp로 페이지가 넘어가게 name 속성을 submit으로 지정합니다. 취소에 name 속성은 reset을 사용하여 테이블 내용을 초기화 시켜줍니다.
 ### 7. 폼 태그로 테이블을 감싸면서 테이블의 유효성 검사와 reservation_p.jsp 페이지로 이동을 위한 onsubmit을 시켜줍니다. 
 ### 8. 유효성 검사를 위해서 head 태그 안에 스크립트 문을 작성합니다. 스크립트 안에서 checkValue 함수를 지정하고 테이블 행에 갑을 입력하지 않고 등록을 눌렀을 경우에 값을 입력하라는 문구가 나오는 코드를 작성합니다. 마지막으로 테이블에 내용을 알맞게 입력하고 등록을 누르면 reservation_p.jsp 페이지로 이동하는 값을 반환합니다.
+
+# 실행화면(reservation_p.jsp)
+![1](https://user-images.githubusercontent.com/104752580/201816574-1bac9d16-b6b1-4b9d-bcc5-49c541cde62d.PNG)
+![2](https://user-images.githubusercontent.com/104752580/201816583-d9fc3979-8aba-4c37-9c33-c542fda8823e.PNG)
+# 코드설명(reservation_p.jsp)
+```jsp
+
+
+<%@ page import="DB.DBConnect" %>
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+String sql = "insert into TBL_VACCRESV_202108 values(?,?,?,?,?,?)";
+
+Connection conn = DBConnect.getConnection();
+PreparedStatement pstmt = conn.prepareStatement(sql);
+request.setCharacterEncoding("UTF-8");
+
+pstmt.setInt(1, Integer.parseInt(request.getParameter("RESVNO")));
+pstmt.setString(2, request.getParameter("JUMIN"));
+pstmt.setString(3, request.getParameter("HOSPCODE"));
+pstmt.setString(4, request.getParameter("RESVDATE"));
+pstmt.setInt(5, Integer.parseInt(request.getParameter("RESVTIME")));
+pstmt.setString(6, request.getParameter("VCODE"));
+
+pstmt.executeUpdate();
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel = "stylesheet" type= "text/css" href="css/style.css?abc">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:forward page="index.jsp"></jsp:forward>
+</body>
+</html>
+
+
+```
+### 1. 6개에 컴럼을 추가하는 쿼리문을 작성합니다.
+### 2. 쿼리문에서 number형인 컬럼은 Integer형으로 입력받는다.
