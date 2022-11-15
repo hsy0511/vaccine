@@ -196,3 +196,152 @@ pstmt.executeUpdate();
 ```
 
 ### 쿼리문에서 NUMBER형태는 형변환를 시켜서 integer형으로 받아주고 다른 4개는 get.parameter를 통해 사용자가 적은 값을 string형으로 세팅해주고 pstmt.executeUpdate를 통해서 테이블에 추가가 됩니다.
+# 실행화면(search.jsp,search_p.jsp)
+![1](https://user-images.githubusercontent.com/104752580/201841170-93f0ea3e-9c55-46b5-8ebd-0ed4fee0b491.PNG)
+![2](https://user-images.githubusercontent.com/104752580/201841175-17e2b6f7-dce4-4042-a78d-6e602468ed0d.PNG)
+![3](https://user-images.githubusercontent.com/104752580/201841181-0c724f47-ffc4-486f-bdbb-69d2e5e6895b.PNG)
+# 코드설명(search.jsp,search_p.jsp)
+```jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel = "stylesheet" type= "text/css" href="css/style.css?abc">
+<title>Insert title here</title>
+<script type="text/javascript">
+function checkValue2() {
+	if(!document.data2.RESVNO.value){
+		alert("예약번호가 입력되지 않았습니다.")
+		data2.RESVNO.focus();
+		return false;
+	}
+		return true
+}
+</script>
+</head>
+<body>
+<header>
+<jsp:include page="layout/header.jsp"></jsp:include>
+</header>
+<nav>
+<jsp:include page="layout/nav.jsp"></jsp:include>
+</nav>
+<section class ="section">
+<form name="data2" action="search_p.jsp" method="post" onsubmit="return checkValue2()">
+<h2>백신예약조회</h2>
+<table class = "table_line">
+<tr>
+<th>예약번호</th>
+<td><input type="text" name="RESVNO"></td>
+</tr>
+<tr>
+<td colspan="2">
+<input type = "submit" value="조회하기">
+<input type = "button" value="홈으로" onclick="location.href='index.jsp'">
+</tr>
+</table>
+</form>
+</section>
+<footer>
+<jsp:include page="layout/footer.jsp"></jsp:include>
+</footer>
+</body>
+</html>
+
+```
+
+```jsp
+
+<%@ page import="DB.DBConnect" %>
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+int RNO = Integer.parseInt(request.getParameter("RESVNO"));
+
+StringBuffer sb = new StringBuffer();
+
+sb.append(" select v.RESVNO")
+.append(" ,j.NAME")
+.append(" ,case substr(v.jumin, 8, 1)")
+.append(" 	when '1' then '남'")
+.append(" 	when '2' then '여'")
+.append(" end as gender")
+.append(" ,case v.HOSPCODE")
+.append(" 	when 'H001' then '가_병원'")
+.append(" 	when 'H002' then '나_병원'")
+.append(" 	when 'H003' then '다_병원'")
+.append(" 	when 'H004' then '라_병원'")
+.append(" end as hospcode")
+.append(" ,to_char(v.RESVDATE,'yyyy\"년\"mm\"월\"dd\"일\"') as  RESVDATE")
+.append(" ,substr(to_char(v.RESVTIME, 'FM0000'),1,2)")
+.append(" 	|| ':' || substr(to_char(v.RESVTIME, 'FM0000'),3,2) as RESVTIME")
+.append(" ,case VCODE")
+.append(" 	when 'V001' then 'A백신'")
+.append(" 	when 'V002' then 'B백신'")
+.append(" 	when 'V003' then 'C백신'")
+.append(" end as vcode")
+.append(" ,case h.HOSPADDR")
+.append(" 	when '10' then '서울'")
+.append(" 	when '20' then '대전'")
+.append(" 	when '30' then '대구'")
+.append(" 	when '40' then '광주'")
+.append(" end as HOSPADDR")
+.append(" from TBL_VACCRESV_202108 v, TBL_JUMIN_202108 j, TBL_HOSP_202108 h")
+.append(" where v.JUMIN = j.JUMIN and v.hospcode = h.hospcode")
+.append(" and v.RESVNO =").append(RNO);
+
+
+String sql = sb.toString();
+
+Connection conn = DBConnect.getConnection();
+PreparedStatement pstmt = conn.prepareStatement(sql);
+ResultSet rs = pstmt.executeQuery();
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel = "stylesheet" type= "text/css" href="css/style.css?abc">
+<title>Insert title here</title>
+</head>
+<body>
+<header>
+<jsp:include page="layout/header.jsp"></jsp:include>
+</header>
+<nav>
+<jsp:include page="layout/nav.jsp"></jsp:include>
+</nav>
+<section class = "section">
+<h2>예약번호<%=RNO %>님의 예약 조회</h2>
+<%if(rs.next()){ %>
+<table>
+<tr>
+<th>예약번호</th><th>성명</th><th>성별</th><th>병원이름</th><th>예약날짜</th><th>예약시간</th><th>병원코드</th><th>병원지역</th>
+</tr>
+<tr>
+<td><%= rs.getString(1) %> </td>
+<td><%= rs.getString(2) %> </td>
+<td><%= rs.getString(3) %> </td>
+<td><%= rs.getString(4) %> </td>
+<td><%= rs.getString(5) %> </td>
+<td><%= rs.getString(6) %> </td>
+<td><%= rs.getString(7) %> </td>
+<td><%= rs.getString(8) %> </td>
+</tr>
+</table>
+<%}else{ %>
+<p align="center">회원번호<%= RNO %>의 회원정보가 없습니다</p>
+<%} %>
+<input type="button" value="돌아가기" onclick="location.href='search.jsp'">
+</section>
+<footer>
+<jsp:include page="layout/footer.jsp"></jsp:include>
+</footer>
+</body>
+</html>
+
+```
