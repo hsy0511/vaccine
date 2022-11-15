@@ -347,3 +347,77 @@ ResultSet rs = pstmt.executeQuery();
 ```
 ### search.jsp에서는 예약번호를 이용하여 예약 정보를 조회하는 테이블을 만들었습니다. 예약번호를 적지 않았을 경우에는 예약번호가 입력되지 않았습니다라는 문구를 출력하였습니다. 그리고 폼 태그를 통해서 onsbmit을 search_p.jsp로 연결시켜주며 조회하기 버튼을 누르면 search_p 페이지로 넘어가는 코드를 작성했습니다.
 ### search_p.jsp에서는 쿼리문을 이용하여 search.jsp에서 적은 예약번호에 대한 성명, 성별, 병원이름, 예약날짜, 예약시간, 병원코드, 병원지역을 불러왔습니다. 또 테이블 안에 포함되지 않은 예약번호를 적게되면 예약정보가 없다는 페이지를 불러왔습니다.
+# 실행화면(total.jsp)
+![4](https://user-images.githubusercontent.com/104752580/201858884-336c6d06-ee50-4d8f-87ac-7cc8445b0f96.PNG)
+# 코드설명(total.jsp)
+```jsp
+<%@ page import="DB.DBConnect" %>
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+StringBuffer sc = new StringBuffer();
+    
+sc.append("select h.HOSPADDR, ")
+.append("case h.HOSPADDR ")
+.append("when '10' then '서울' ")
+.append("when '20' then '대전' ")
+.append("when '30' then '대구' ")
+.append("when '40' then '광주' ")
+.append("end as HOSPAREA, ")
+.append("count(v.HOSPCODE) ")
+.append("from TBL_VACCRESV_202108 v, TBL_HOSP_202108 h ")
+.append("where v.HOSPCODE(+)= h.HOSPCODE ")
+.append("group by HOSPADDR ")
+.append("order by HOSPADDR ");
+    
+    String sql = sc.toString();
+    
+    Connection conn = DBConnect.getConnection();
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    ResultSet rs = pstmt.executeQuery();
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel = "stylesheet" type= "text/css" href="css/style.css?abc">
+<title>Insert title here</title>
+</head>
+<body>
+<header>
+<jsp:include page="layout/header.jsp"></jsp:include>
+</header>
+<nav>
+<jsp:include page="layout/nav.jsp"></jsp:include>
+</nav>
+<section class= "section">
+<h2>백신예약현황</h2>
+<table class = "table_line">
+<tr>
+<th>병원지역</th><th>병원지역명</th><th>접조예약건수</th>
+</tr>
+<%
+int sum = 0;
+while(rs.next()){ %>
+<tr>
+<td><%=rs.getString(1) %></td>
+<td><%=rs.getString(2) %></td>
+<td><%=rs.getString(3) %></td>
+</tr>
+<% sum += Integer.parseInt(rs.getString(3));
+} %>
+<tr>
+<td colspan="2">
+총합
+</td>
+<td><%= sum %>
+</table>
+</section>
+<footer>
+<jsp:include page="layout/footer.jsp"></jsp:include>
+</footer>
+</body>
+</html>
+```
+### 총합을 구하기 위해서 쿼리문에서 병원지역이 10이면 서울, 20이면 대전, 30이면 대구, 40이면 광주로 나타내게 합니다. 나타낼때 병원지역에서 사람이 없으면 나오지 않지만 병원지역이 null값이여도 나오게 하기 위해서 백신 테이블과 병원테이블을 외부조인 시켜줍니다. 각 값들을 String 형태로 변환하여 나타내고 총합은 변수 sum에 String값들을 모두 더하여 넣어서 나타냅니다.  
