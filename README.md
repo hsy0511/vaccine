@@ -32,6 +32,12 @@ rs.next();
 int num = rs.getInt(1)+1;
 
 %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel = "stylesheet" type= "text/css" href="css/style.css?abc">
+<title>Insert title here</title>
 <script type="text/javascript">
 function checkValue(){
 	if(!document.data.RESVNO.value){
@@ -80,7 +86,7 @@ function checkValue(){
 <th>예약번호</th>
 <td><input type="text" name="RESVNO" value="<%=num%>" readonly></td>
 </tr>
-<tr>
+<tr> 
 <th>주민번호</th>
 <td><input type="text" name="JUMIN"></td>
 </tr>
