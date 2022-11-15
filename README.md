@@ -12,3 +12,137 @@
 ### webapp 아래 layoyt 폴더를 만든 후 폴더 안에 header,nav,section,footer 4개의 jsp를 만들고, webapp 아래 index,reservatoin,reservatoin_p,member_list,search,search_p,total 7개의 jsp 페이지를 만든다. 또 DBConnect.java라는 데이터베이스 연결 페이지를 만들어준다.(style.css페이지는 필수 사항이 아니지만 css로 꾸미고 싶은 사람은 사용한다.)
 # DB분석
 ### 데이터베이스에서 테이블은 TBL_JUMIN_202108, TBL_HOSP_202108, TBL_VACCRESV_202108 3개의 테이블생성한다. 폼안에 입력양식들의 name 속성은 오라클 쿼리문에 테이블 컬럼명과 동일하게 작용한다.
+# 실행 화면 (reservation.jsp)
+![1](https://user-images.githubusercontent.com/104752580/201795452-95412c99-05c8-4922-b7ab-0124461dd084.PNG)
+![2](https://user-images.githubusercontent.com/104752580/201795455-b5a75f87-0e33-42c2-8975-54d75ce90b79.PNG)
+# 실행 코드 설명 (reservation.jsp)
+```jsp
+<%@ page import="DB.DBConnect" %>
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+String sql = "select max(RESVNO) from TBL_VACCRESV_202108";
+
+Connection conn = DBConnect.getConnection();
+PreparedStatement pstmt = conn.prepareStatement(sql);
+ResultSet rs = pstmt.executeQuery();
+
+rs.next();
+int num = rs.getInt(1)+1;
+
+%>
+<script type="text/javascript">
+function checkValue(){
+	if(!document.data.RESVNO.value){
+		alert("예약번호가 입력되지 않았습니다.");
+		data.RESVNO.focus();
+		return false;
+	}else if(!document.data.JUMIN.value){
+		alert("주민번호가 입력되지 않았습니다.");
+		data.JUMIN.focus();
+		return false;
+	}
+	else if(!document.data.VCODE.value){
+		alert("백신코드가 입력되지 않았습니다.");
+		return false;
+	}
+	else if(!document.data.HOSPCODE.value){
+		alert("병원코드가 입력되지 않았습니다.");
+		return false;
+	}
+	else if(!document.data.RESVDATE.value){
+		alert("예약날짜가 입력되지 않았습니다.");
+		data.RESVDATE.focus();
+		return false;
+	}
+	else if(!document.data.RESVTIME.value){
+		alert("예약시간이 입력되지 않았습니다.");
+		data.RESVTIME.focus();
+		return false;
+	}
+	return true;
+}	
+</script>
+</head>
+<body>
+<header>
+<jsp:include page="layout/header.jsp"></jsp:include>
+</header>
+<nav>
+<jsp:include page="layout/nav.jsp"></jsp:include>
+</nav>
+ <section class = "section">
+<h2>백신예약</h2>
+<form name="data" method="post" action="reservation_p.jsp" onsubmit="return checkValue()">
+<table class="table_line">
+<tr>
+<th>예약번호</th>
+<td><input type="text" name="RESVNO" value="<%=num%>" readonly></td>
+</tr>
+<tr>
+<th>주민번호</th>
+<td><input type="text" name="JUMIN"></td>
+</tr>
+<tr>
+<th>백신코드</th>
+<td>
+<select name="VCODE">
+<option value="V001">A백신</option>
+<option value="V002">B백신</option>
+<option value="V003">C백신</option>
+</select>
+</td>
+</tr>
+<tr>
+<th>병원코드</th>
+<td>
+<label><input type="radio" name="HOSPCODE" value="H001">가_병원</label>
+<label><input type="radio" name="HOSPCODE" value="H002">나_병원</label>
+<label><input type="radio" name="HOSPCODE" value="H003">다_병원</label>
+<label><input type="radio" name="HOSPCODE" value="H004">라_병원</label>
+</td>
+</tr>
+<tr>
+<th>병원코드</th>
+<td>
+<label><input type="checkbox" name="HOSPCODE" value="H001">가_병원</label>
+<label><input type="checkbox" name="HOSPCODE" value="H002">나_병원</label>
+<label><input type="checkbox" name="HOSPCODE" value="H003">다_병원</label>
+<label><input type="checkbox" name="HOSPCODE" value="H004">라_병원</label>
+</td>
+</tr>
+<tr>
+<th>예약날짜</th>
+<td><input type="text" name="RESVDATE"> </td>
+</tr>
+<tr>
+<th>예약시간</th>
+<td><input type="text" name="RESVTIME"> </td>
+</tr>
+<tr>
+<th colspan="2">
+<input type="submit" value="등록">
+<input type="reset" value="취소">
+</th>
+</tr>
+</table>
+</form>
+</section>
+ <footer>
+<jsp:include page="layout/footer.jsp"></jsp:include>
+</footer>	
+</body>
+</html>
+
+
+
+```
+### 1. DB.DBConnect와 java.sql.*을 이용하여 DB와 sql을 연결합니다.
+### 2. 예약번호를 자동완성을 시키기 위해서 백신 테이블에서 마지막 예약번호를 받아오는 쿼리문을 작성합니다.
+### 3. 마지막 예약 번호를 받아온 후에 nun 값에 마지막 번호에서 +1를 더한 값을 넣어줍니다.
+### 4. 테이블 생성 후 각 행마다 name을 지정해 줍니다.
+### 5. 예약 번호 행에는 value 값을 num으로 지정해주고 readonly 속성을 사용하여 자동완성을 해줍니다.
+### 6. 마지막 행에는 등록과 취소라는 버튼을 만들고 등록을 누르게 되면 reservation_p.jsp로 페이지가 넘어가게 name 속성을 submit으로 지정합니다. 취소에 name 속성은 reset을 사용하여 테이블 내용을 초기화 시켜줍니다.
+### 7. 폼 태그로 테이블을 감싸면서 테이블의 유효성 검사와 reservation_p.jsp 페이지로 이동을 위한 onsubmit을 시켜줍니다. 
+### 8. 유효성 검사를 위해서 head 태그 안에 스크립트 문을 작성합니다. 스크립트 안에서 checkValue 함수를 지정하고 테이블 행에 갑을 입력하지 않고 등록을 눌렀을 경우에 값을 입력하라는 문구가 나오는 코드를 작성합니다.
