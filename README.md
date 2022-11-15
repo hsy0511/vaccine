@@ -199,7 +199,7 @@ pstmt.executeUpdate();
 # 실행화면(search.jsp,search_p.jsp)
 ![1](https://user-images.githubusercontent.com/104752580/201841170-93f0ea3e-9c55-46b5-8ebd-0ed4fee0b491.PNG)
 ![2](https://user-images.githubusercontent.com/104752580/201841175-17e2b6f7-dce4-4042-a78d-6e602468ed0d.PNG)
-![3](https://user-images.githubusercontent.com/104752580/201841181-0c724f47-ffc4-486f-bdbb-69d2e5e6895b.PNG)
+![3](https://user-images.githubusercontent.com/104752580/201845087-3e94b397-d7c7-410e-bcfe-7cd13af82eb1.PNG)
 # 코드설명(search.jsp,search_p.jsp)
 ```jsp
 
@@ -262,7 +262,7 @@ function checkValue2() {
 <%
 int RNO = Integer.parseInt(request.getParameter("RESVNO"));
 
-StringBuffer sb = new StringBuffer();
+StringBuffer sc = new StringBuffer();
 
 sb.append(" select v.RESVNO")
 .append(" ,j.NAME")
@@ -295,7 +295,7 @@ sb.append(" select v.RESVNO")
 .append(" and v.RESVNO =").append(RNO);
 
 
-String sql = sb.toString();
+String sql = sc.toString();
 
 Connection conn = DBConnect.getConnection();
 PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -334,7 +334,7 @@ ResultSet rs = pstmt.executeQuery();
 </tr>
 </table>
 <%}else{ %>
-<p align="center">회원번호<%= RNO %>의 회원정보가 없습니다</p>
+<p align="center">번호<%= RNO %>의 예약정보가 없습니다</p>
 <%} %>
 <input type="button" value="돌아가기" onclick="location.href='search.jsp'">
 </section>
@@ -345,3 +345,5 @@ ResultSet rs = pstmt.executeQuery();
 </html>
 
 ```
+### search.jsp에서는 예약번호를 이용하여 예약 정보를 조회하는 테이블을 만들었습니다. 예약번호를 적지 않았을 경우에는 예약번호가 입력되지 않았습니다라는 문구를 출력하였습니다. 그리고 폼 태그를 통해서 onsbmit을 search_p.jsp로 연결시켜주며 조회하기 버튼을 누르면 search_p 페이지로 넘어가는 코드를 작성했습니다.
+### search_p.jsp에서는 쿼리문을 이용하여 search.jsp에서 적은 예약번호에 대한 성명, 성별, 병원이름, 예약날짜, 예약시간, 병원코드, 병원지역을 불러왔습니다. 또 테이블 안에 포함되지 않은 예약번호를 적게되면 예약정보가 없다는 페이지를 불러왔습니다.
