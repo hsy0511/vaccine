@@ -194,5 +194,5 @@ pstmt.executeUpdate();
 
 
 ```
-### 1. 6개에 컴럼을 추가하는 쿼리문을 작성합니다.
-### 2. 쿼리문에서 number형인 컬럼은 Integer형으로 입력받는다.
+
+### 쿼리문에서 NUMBER형태는 형변환를 시켜서 integer형으로 받아주고 다른 4개는 get.parameter를 통해 사용자가 적은 값을 string형으로 세팅해주고 pstmt.executeUpdate를 통해서 테이블에 추가가 됩니다.
